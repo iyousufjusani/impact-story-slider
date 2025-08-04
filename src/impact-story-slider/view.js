@@ -21,5 +21,5 @@
  */
 
 /* eslint-disable no-console */
-console.log( 'Hello World! (from create-block-impact-story-slider block)' );
+console.log("Impact Story Slider block - Loaded Successfully!");
 /* eslint-enable no-console */

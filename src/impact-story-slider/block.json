@@ -5,10 +5,33 @@
 	"version": "0.1.0",
 	"title": "Impact Story Slider",
 	"category": "widgets",
-	"icon": "smiley",
-	"description": "Example block scaffolded with Create Block tool.",
+	"icon": "slides",
+	"description": "Image Story Slider - Reusable impact story slider with media, text styling, and directional control slides with parallax",
 	"example": {},
+	"attributes": {
+		"numSlides": { "type": "number", "default": 3 },
+		"slideDirection": { "type": "string", "default": "left" },
+		"showHeaders": { "type": "boolean", "default": true },
+		"slides": { "type": "array", "default": [] },
+		"mediaURL": { "type": "string" },
+		"mediaID": { "type": "number" },
+		"text": { "type": "string" },
+		"fontSize": { "type": "number", "default": 18 },
+		"textColor": { "type": "string" },
+		"backgroundColor": { "type": "string" },
+		"heading": { "type": "string" },
+		"isFullWidth": { "type": "boolean", "default": false }
+	},
 	"supports": {
+		"align": true,
+		"color": {
+			"text": true,
+			"background": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true
+		},
 		"html": false
 	},
 	"textdomain": "impact-story-slider",

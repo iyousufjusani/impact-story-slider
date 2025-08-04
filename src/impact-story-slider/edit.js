@@ -1,41 +1,117 @@
-/**
- * Retrieves the translation of text.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
- */
-import { __ } from '@wordpress/i18n';
+// ✅ edit.js
+import {
+	InspectorControls,
+	MediaUpload,
+	MediaUploadCheck,
+	RichText,
+	PanelColorSettings,
+	useBlockProps,
+} from "@wordpress/block-editor";
+import {
+	PanelBody,
+	RangeControl,
+	SelectControl,
+	Button,
+	TextControl,
+} from "@wordpress/components";
+import { Fragment } from "@wordpress/element";
+import "./editor.scss";
 
-/**
- * React hook that is used to mark the block wrapper element.
- * It provides all the necessary props like the class name.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
- */
-import { useBlockProps } from '@wordpress/block-editor';
+const DIRECTIONS = [
+	{ label: "Left", value: "left" },
+	{ label: "Right", value: "right" },
+	{ label: "Up", value: "up" },
+	{ label: "Down", value: "down" },
+];
 
-/**
- * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
- * Those files can contain any CSS code that gets applied to the editor.
- *
- * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
- */
-import './editor.scss';
+export default function Edit({ attributes, setAttributes }) {
+	const {
+		mediaURL,
+		mediaID,
+		text,
+		fontSize,
+		direction,
+		textColor,
+		backgroundColor,
+		heading,
+		headingEnabled,
+	} = attributes;
 
-/**
- * The edit function describes the structure of your block in the context of the
- * editor. This represents what the editor will render when the block is used.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#edit
- *
- * @return {Element} Element to render.
- */
-export default function Edit() {
+	const blockProps = useBlockProps();
+
 	return (
-		<p { ...useBlockProps() }>
-			{ __(
-				'Impact Story Slider – hello from the editor!',
-				'impact-story-slider'
-			) }
-		</p>
+		<Fragment>
+			<InspectorControls>
+				<PanelBody title="Media & Content Settings">
+					<MediaUploadCheck>
+						<MediaUpload
+							onSelect={(media) =>
+								setAttributes({ mediaURL: media.url, mediaID: media.id })
+							}
+							allowedTypes={["image", "video"]}
+							render={({ open }) => (
+								<Button onClick={open} isSecondary>
+									{mediaURL ? "Replace Media" : "Upload Media"}
+								</Button>
+							)}
+						/>
+					</MediaUploadCheck>
+					<TextControl
+						label="Slide Heading"
+						value={heading}
+						onChange={(val) => setAttributes({ heading: val })}
+					/>
+					<SelectControl
+						label="Direction"
+						value={direction}
+						options={DIRECTIONS}
+						onChange={(val) => setAttributes({ direction: val })}
+					/>
+					<RangeControl
+						label="Font Size"
+						value={fontSize}
+						onChange={(val) => setAttributes({ fontSize: val })}
+						min={10}
+						max={72}
+					/>
+				</PanelBody>
+
+				<PanelColorSettings
+					title="Color Settings"
+					initialOpen={true}
+					colorSettings={[
+						{
+							value: textColor,
+							onChange: (val) => setAttributes({ textColor: val }),
+							label: "Text Color",
+						},
+						{
+							value: backgroundColor,
+							onChange: (val) => setAttributes({ backgroundColor: val }),
+							label: "Background Color",
+						},
+					]}
+				/>
+			</InspectorControls>
+
+			<div {...blockProps} className={`impact-slider direction-${direction}`}>
+				{heading && headingEnabled && (
+					<h2 style={{ color: textColor }}>{heading}</h2>
+				)}
+				{mediaURL &&
+					(mediaURL.endsWith(".mp4") ? (
+						<video src={mediaURL} autoPlay loop muted playsInline />
+					) : (
+						<img src={mediaURL} alt="Impact Media" />
+					))}
+				<RichText
+					tagName="p"
+					value={text}
+					onChange={(val) => setAttributes({ text: val })}
+					placeholder="Enter story text..."
+					style={{ fontSize, color: textColor, backgroundColor }}
+				/>
+			</div>
+		</Fragment>
 	);
 }
